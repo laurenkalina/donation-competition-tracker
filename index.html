@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Donation Competition Tracker</title>
+  <!-- Import Lato font from Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Lato&display=swap" rel="stylesheet">
+  <!-- Import Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Font styling */
+    body {
+      font-family: "Lato", Arial;
+    }
+    /* Header row styling */
+    .header-row img {
+      max-height: 100px;
+    }
+    /* Container for each row ("track") */
+    .track-container {
+      height: 90px;
+      background-color: #f8f9fa;
+      position: relative;
+      margin-bottom: 1rem;
+      border: 1px solid #dee2e6;
+      border-radius: 0.25rem;
+      overflow: hidden;
+    }
+    /* The colored bar fill to the left of the competitor image */
+    .bar-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      z-index: 1;
+    }
+    /* Competitor image styling */
+    .competitor-img {
+      position: absolute;
+      top: 10px;
+      height: 70px;
+      width: auto;
+      border-radius: 50%;
+      z-index: 2;
+    }
+    /* Name label styling */
+    .name-label {
+      position: absolute;
+      top: 5px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0px 5px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      z-index: 2;
+    }
+    /* Donation label styling */
+    .donation-label {
+      position: absolute;
+      top: 70px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 0px 5px;
+      border-radius: 5px;
+      font-weight: bold;
+      font-size: 0.8rem;
+      z-index: 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="container mt-4" id="tracker">
+    <!-- Header with logo image -->
+    <div class="row align-items-center header-row mb-4">
+      <div class="col-auto">
+        <img src="images/logo.png" alt="Pie" class="img-fluid">
+      </div>
+      <div class="col">
+        <h1><b>Donation Competition Tracker</b></h1>
+        <p>Vote for a competitor to win by donating [here]! The competitor with the highest donations will win [prize]. All donations go to [charity]. This tracker will be updated [frequency].</p>
+      </div>
+    </div>
+    <!-- Competitor rows will be injected here -->
+  </div>
+
+  <script>
+    // Define competitor data (name, donation, and image path)
+    const competitorData = [
+      { name: 'Competitor 1', donation: 1200, image: 'images/competitor.png' },
+      { name: 'Competitor 2', donation: 800, image: 'images/competitor.png' },
+      { name: 'Competitor 3', donation: 1500, image: 'images/competitor.png' },
+      { name: 'Competitor 4', donation: 0, image: 'images/competitor.png' }
+    ];
+    
+    // Calculate the maximum donation (to use as the baseline for positioning)
+    const maxDonation = Math.max(...competitorData.map(m => m.donation));
+    // Define the maximum left offset in percentage for the highest donation.
+    const maxOffsetPercent = 80;
+    
+    // Get the container where we'll inject the rows
+    const trackerDiv = document.getElementById('tracker');
+    
+    // For each competitor, create a Bootstrap row with a track container
+    competitorData.forEach(competitor => {
+      // Compute left offset: donation/maxDonation * maxOffsetPercent.
+      // If maxDonation is 0, default to 0%.
+      const offsetPercent = maxDonation === 0 ? 0 : (competitor.donation / maxDonation) * maxOffsetPercent;
+      
+      // Create a row for the competitor
+      const row = document.createElement('div');
+      row.className = 'row align-items-center';
+      
+      // Create a full-width column for the track
+      const col = document.createElement('div');
+      col.className = 'col-12';
+      
+      // Create the track container
+      const trackContainer = document.createElement('div');
+      trackContainer.className = 'track-container';
+      
+      // Create the colored bar fill element with width = offsetPercent%
+      const barFill = document.createElement('div');
+      barFill.className = 'bar-fill';
+      barFill.style.width = offsetPercent + '%';
+      // Use #005D92 if this competitor is "winning", otherwise use #9ED1EE
+      barFill.style.backgroundColor = (competitor.donation === maxDonation) ? "#005D92" : "#9ED1EE";
+      
+      // Create the competitor image with dynamic left offset
+      const img = document.createElement('img');
+      img.src = competitor.image;
+      img.alt = competitor.name;
+      img.className = 'competitor-img';
+      img.style.left = offsetPercent + '%';
+
+      // Create the name label with the same left offset
+      const name_label = document.createElement('div');
+      name_label.className = 'name-label';
+      name_label.style.left = offsetPercent + '%';
+      name_label.innerText = competitor.name;
+      
+      // Create the donation label with the same left offset
+      const donation_label = document.createElement('div');
+      donation_label.className = 'donation-label';
+      donation_label.style.left = offsetPercent + '%';
+      donation_label.innerText = '$' + competitor.donation;
+      
+      // Append the bar fill, image, and label to the track container
+      trackContainer.appendChild(barFill);
+      trackContainer.appendChild(img);
+      trackContainer.appendChild(name_label);
+      trackContainer.appendChild(donation_label);
+      
+      // Build the row and inject into the container
+      col.appendChild(trackContainer);
+      row.appendChild(col);
+      trackerDiv.appendChild(row);
+    });
+  </script>
+</body>
+</html>
