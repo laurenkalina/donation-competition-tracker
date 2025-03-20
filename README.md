@@ -5,7 +5,7 @@ A lightweight, static webpage to track donation amounts in an office donation co
 ## Setup Instructions
 
 ### 1. Add Images
-Place the competitors' photos and your logo image in images/.
+Place the competitors' photos and your logo image in `images/`.
 
 ### 2. Update Competitor Data
 
